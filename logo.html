@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Ride - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #000428, #004e92);
+            overflow: hidden;
+            cursor: pointer; /* Shows user they can tap */
+        }
+
+        .logo-container {
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .logo-container img {
+            width: 180px;
+            animation: scaleUp 2s ease-in-out infinite alternate;
+        }
+
+        .welcome-text {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 15px;
+            font-family: Arial, sans-serif;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="C:\Users\elakk\Downloads\VR.png" alt="VR Ride Logo">
+        <div class="welcome-text">Welcome to VoiceRide</div>
+    </div>
+
+    <script>
+        function speak(text, callback) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            speech.onend = () => { 
+                if (callback) callback(); 
+            };
+            window.speechSynthesis.speak(speech);
+        }
+
+        function startVoiceAssistant() {
+            speak("Welcome to Voice Ride. Redirecting to login page.", () => {
+                setTimeout(() => window.location.href = "login.html", 1000); 
+            });
+        }
+
+        // Wait for user tap
+        document.body.addEventListener("click", () => {
+            startVoiceAssistant();
+        }, { once: true }); // Ensures it runs only once
+
+    </script>
+
+</body>
+</html>

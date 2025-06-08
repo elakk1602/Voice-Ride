@@ -1,0 +1,88 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Destination</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: white; margin-top: 30px; }
+        .container { width: 90%; max-width: 400px; margin: auto; }
+        h2 { color: #1500c3; }
+        input { width: 80%; padding: 10px; margin: 10px; font-size: 16px; }
+        .confirm-button { background: #1500c3; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Enter Your Destination</h2>
+        <input type="text" id="destinationInput" placeholder="Speak your destination" readonly>
+        <button class="confirm-button" onclick="confirmRide()">Confirm Ride</button>
+    </div>
+
+    <script>
+        // Speech Recognition Setup
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        // Text-to-Speech Function
+        function speak(text, callback) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            speech.onend = () => { if (callback) callback(); };
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Function to Start Listening
+        function startListening() {
+            recognition.start();
+        }
+
+        // Handle Voice Input
+        recognition.onresult = (event) => {
+            const destination = event.results[0][0].transcript;
+            console.log("User said destination:", destination);
+            document.getElementById("destinationInput").value = destination;
+            speak(`You have chosen ${destination}. Your ride is now confirmed!`, redirectToPayment);
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            speak("I couldn't hear you. Please try again.", startListening);
+        };
+
+        // Automatically Ask for Destination When Page Loads or User Clicks Anywhere
+        function startVoiceAssistant() {
+            speak("Where do you want to go?", startListening);
+        }
+
+        // Start listening when the page loads
+        window.onload = startVoiceAssistant;
+
+        // Start listening when user clicks anywhere on the page
+        document.body.addEventListener("click", startVoiceAssistant);
+        
+        function confirmRide() {
+            let destination = document.getElementById("destinationInput").value;
+            if (destination.trim() !== "") {
+                speak(`Your ride to ${destination} is confirmed. Now proceeding to the payment page.`, redirectToPayment);
+            } else {
+                speak("Please say your destination before confirming.");
+                startListening();
+            }
+        }
+
+        // Redirect to Payment Page
+        function redirectToPayment() {
+            setTimeout(() => {
+                speak("Redirecting to payment page");
+                window.location.href = "payment.html"; // Change to your actual payment page file name
+            }, 1000); // Wait for 3 seconds before redirecting
+        }
+    </script>
+
+</body>
+</html>
+ 
